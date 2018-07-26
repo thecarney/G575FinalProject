@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Confederate Memorials</title>
+    <!-- Font Awesome 5 -->
+    <script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>    <!--bootstrap 4-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.min.css" rel="stylesheet">
+    <!--leaflet-->
+    <link rel="stylesheet" href="lib/leaflet.css"/>
+    <!--my css-->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- Navbar -->
+<header>
+    <nav	class="navbar bg-custom-darkblue navbar-dark navbar-expand-sm fixed-top" id="header1">
+        <div class="container-fluid p-1">
+            <div class="h5 font-weight-light text-white mt-2">Confederate Memorial Explorer</div>
+            <div class="navbar-nav ml-auto mr-0">
+                <button class="customMenuButton1" data-toggle="modal" data-target="#helpModal">
+                    <div class="text-center" data-toggle="tooltip" title="Open Help">
+                        <i class="fas fa-question-circle fa-2x"></i>
+                    </div>
+                </button>
+                <button class="customMenuButton1" data-toggle="modal" data-target="#aboutModal">
+                    <div class="text-center" data-toggle="tooltip" title="About this App">
+                        <i class="fas fa-info-circle fa-2x"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Help Modal -->
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="helpModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" >Help Menu</h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="aboutModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" >About Our App</h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</header>
+<!-- Navbar -->
+
+<!-- MAIN -->
+<main role="main">
+
+    <!-- Splash Modal -->
+    <div class="modal fade" id="splashModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text" id="exampleModalLabel"><strong>The Confederate Memorial Browser</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    This application explores the ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
+                </div>
+                <div class="modal-footer flex-column align-content-center">
+                    <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Start Exploring</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAP PAGE -->
+    <div class="container-fluid fadeIn" id="mainContainer">
+        <div class="row" id="rowParent">
+            <div class="col m-0 p-0">
+            <!-- MAP -->
+                <div class="container-fluid" id="map"></div>
+            </div>
+        </div>
+    </div>
+    <!-- MAP PAGE -->
+
+</main>
+<!-- MAIN -->
+
+<!-- FOOTER -->
+<footer class="navbar footer bg-custom-darkblue navbar-expand-sm mb-0" id="footer">
+    <p class="navbar-nav ml-auto text-light font-weight-light"><small>© Mary Mahoney | Kristen Wenzel | James Carney</small></p>
+</footer>
+<!-- FOOTER -->
+
+<!-- device size tester -->
+<div id="device-size-detector">
+    <div id="xs" class="d-block d-sm-none"></div>
+    <div id="sm" class="d-none d-sm-block d-md-none"></div>
+    <div id="md" class="d-none d-md-block d-lg-none"></div>
+    <div id="lg" class="d-none d-lg-block d-xl-none"></div>
+    <div id="xl" class="d-none d-xl-block"></div>
+</div>
+<!-- device size tester -->
+
+
+<!--Jquery-->
+<script type="text/javascript" src="lib/jquery-3.3.1.js"></script>
+<!--bootstap 4 scripts-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<!-- material design bootstrap core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
+<!-- leaflet -->
+<script src="lib/leaflet.js"></script>
+<!--my scripts-->
+<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
