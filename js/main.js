@@ -55,147 +55,87 @@ function map() {
     L.control.layers(bmGroup, null, {position: 'topleft'}).addTo(map);
 
     // declare data layerGroups
-    let defaultLG;
-    let majorLG;
-    let moderateLG;
-    let minorLG;
-    let markerHighlightLG = L.layerGroup().addTo(map);
-    let currentlyActiveLG;
-    let severityTag = "tot_floods";
+    let stateLG;  // for state outlines
+    let monumentLG;  // points for monuments
+    let monumentHighlightLG = L.layerGroup().addTo(map);  // can use to highlight a clicked point
 
-    // vars for managing Decade Slider tool and status
-    let jsonResponse;
-    let decadeArray;
-    let decadeIndex = 0;
-    let decadeSlider;
-    let decadeToolStatus = 0;
-    let oldValDecade = [1900,1909];
-
-    // vars for managing Flood Count Slider tool and status
-    let rangeFilter;
-    let filterToolStatus = 0;
-    let oldValFilter = [0,40];
-    let topCaller = "none";  // all, maj, mod, min, none
-    let filterLayer;
-
-
-
-    // async load xmlhttprequest object of json data type
-    $.ajax("data/state.geojson", {
+        // async load xmlhttprequest object of json data type
+    $.ajax("data/monument.json", {
         dataType: "json",
-        success: function(response){
+        success: function(response1){
 
-            // store response
-            jsonResponse = response;
+            $.ajax("data/state.json", {
+                dataType: "json",
+                success: function(response2){
 
-            // create legend
-            createLegend(map);
+                    // make markers
+                    monumentLG = createMarkerLayer(response1);
+                    stateLG = L.geoJSON(response2);
 
+                    // add layers
+                    monumentLG.addTo(map);
+                    stateLG.addTo(map);
+
+                    // create legend
+                    createLegend(map);
+
+                }
+            });
         }
     });
+
+    // parent function to make point features
+    function createMarkerLayer(data){
+        // iterate through all features in json
+        return L.geoJson(data, {
+            // for each feature, call function to vectorize it
+            pointToLayer: function (feature, latlng) {
+                return pointToLayer(feature, latlng);
+            }
+        });
+    }
 
     // create temporal legend
     function createLegend() {
         let LegendControl = L.Control.extend({
             options: {
-                position: 'bottomright'
+                position: 'bottomleft'
             },
             onAdd: function (map) {
                 // container
                 let container = L.DomUtil.create('div', 'legend-control-container');
-                // temporal
-                $(container).append('<div class="btn-dark" id="temporal-legend">');
-                // attribute
-                let svg = '<svg class="figure" id="attribute-legend" width="160px" height="60px">';
-                // circles
-                var circles = {
-                    max: 20,
-                    mean: 40,
-                    min: 60
-                };
-                // loop to add svg
-                for (var circle in circles){
-                    svg += '<circle class="legend-circle" id="' + circle + '" fill="#F47821" fill-opacity="0.8" stroke="#000000" cx="30"/>';
-                    svg += '<text id="' + circle + '-text" x="65" y="' + circles[circle] + '"></text>';
-                };
-                svg += "</svg>";
-                $(container).append(svg);
                 return container;
             }
         });
         map.addControl(new LegendControl());
     }
 
-    // update svg legend
-    function updateLegend(){
-        //get the max, mean, and min values as an object
-        var circleValues = getCircleValues(map);
-
-        for (let key in circleValues) {
-            // radius
-            let radius = calcPropRadius(circleValues[key]);
-            // fill
-            let fill = getLegendColor();
-            // assign the cy and r attributes
-            $('#'+key).attr({
-                cy: 59 - radius,
-                r: radius,
-                fill: fill
-            });
-            // legend text
-            $('#'+key+'-text').text(Math.round(circleValues[key]*100)/100 + " floods");
-        }
-    };
-
-    // make array of attributes (fields) with "d_" in the name (# floods by decades)
-    function processData(data) {
-        // make array
-        let attributesArray = [];
-        // get properties of feature 1
-        let properties = data.features[0].properties;
-        // populate array
-        for (let field in properties) {
-            // only get attributes with pop
-            if (field.indexOf("d_") > -1) {
-                attributesArray.push(field);
-            };
-        };
-        return attributesArray;
-    }
-
-
-
     // marker styling and proportial symbols, this is called for each feature from createPropSymbols
-    function pointToLayer(feature, latlng, tag) {
+    function pointToLayer(feature, latlng) {
         //make a style for markers
         let geojsonMarkerOptions = defaultMarkerOptions();
         // marker
-        let marker = L.circleMarker(latlng, geojsonMarkerOptions);
-
-        // new radius
-        let radius = calcPropRadius(Number(feature.properties[tag]));
-        marker.setRadius(radius);
+        let marker = L.marker(latlng);
 
         // make popup
-        let popupContent = "<b>"+feature.properties.city + "</b> showing " + "<b>" + feature.properties.tot_floods + "</b> floods.";
+        let popupContent = "<b>"+feature.properties.name;
         marker.bindPopup(popupContent, {
-            offset: new L.Point(0,-geojsonMarkerOptions.radius),
             closeButton: false
         });
-        // add listeners for hover popup and info panel
+        // add listeners for hover popup
         addListeners(marker);
-        // return the marker to the caller to be added to map
+        // return the marker to the caller
         return marker;
-    };
+    }
 
     // called on creation of each marker to add listeners to it
     function addListeners (marker){
+        // marker options for highlight
         let markerOptions = {
-            radius: marker.getRadius()*1.25,
-            fillColor: "#000000",
-            color: "#df00cd",
-            weight: 4,
-            opacity: 1,
+            radius: 6,
+            color: "#df00db",
+            weight: 11,
+            opacity: .75,
             fillOpacity: 0
         };
 
@@ -207,60 +147,22 @@ function map() {
                 this.closePopup();
             },
             click: function () {
-                // populate the "Community Overview" info panel with desc of clicked marker
-                // city name
-                let city =
-                    "<b>"+marker.feature.properties.city + "</b>" + "<i> (" + marker.feature.properties.pronunciation + ")</i>";
-                $("#city").html(city);
-                // watershed
-                let shed =
-                    "HUC12: <i>" + marker.feature.properties.watershed + "</i>";
-                $("#shed").html(shed);
-                // desc
-                let desc =
-                    "<p>" + marker.feature.properties.desc + "</p>";
-                $("#desc").html(desc);
+                // add zoom and story map tie in
+
 
                 // clear old highlight
-                markerHighlightLG.clearLayers();
+                monumentHighlightLG.clearLayers();
+
                 // add new highlight
-                L.circleMarker(marker.getLatLng(),markerOptions).addTo(markerHighlightLG);
-
-                //bar chart
-                let maj = Number(marker.feature.properties.tot_sev_major);
-                let mod = Number(marker.feature.properties.tot_sev_moderate);
-                let min = Number(marker.feature.properties.tot_sev_minor);
-                let tot = Number(marker.feature.properties.tot_floods);
-                let und = tot - (maj + mod + min);
-                let data = [maj, mod, min, und, tot];
-                makeBarChart(data);
-
+                L.circleMarker(marker.getLatLng(),markerOptions).addTo(monumentHighlightLG);
             }
         });
-    };
+    }
 
     // for circle markers
     function  defaultMarkerOptions() {
         let colorAll = "#138db8";
-        let colorMaj = "#e31a1c";
-        let colorMod = "#fd8d3c";
-        let colorMin = "#fecc5c";
-        let colorCurrent;
-
-        switch (currentlyActiveLG) {
-            case defaultLG:
-                colorCurrent = colorAll;
-                break;
-            case majorLG:
-                colorCurrent = colorMaj;
-                break;
-            case moderateLG:
-                colorCurrent = colorMod;
-                break;
-            case minorLG:
-                colorCurrent = colorMin;
-                break;
-        }
+        let colorCurrent = colorAll;
 
         return {
             radius: 6,
@@ -272,36 +174,9 @@ function map() {
         };
     }
 
-    // for legend svg color
-    function  getLegendColor() {
-        let colorAll = "#138db8";
-        let colorMaj = "#e31a1c";
-        let colorMod = "#fd8d3c";
-        let colorMin = "#fecc5c";
-        let colorCurrent;
-
-        switch (currentlyActiveLG) {
-            case defaultLG:
-                colorCurrent = colorAll;
-                break;
-            case majorLG:
-                colorCurrent = colorMaj;
-                break;
-            case moderateLG:
-                colorCurrent = colorMod;
-                break;
-            case minorLG:
-                colorCurrent = colorMin;
-                break;
-        }
-
-        return colorCurrent;
-    }
-
     // return map object
     return map;
 }
-
 
 function resize(map) {
     // window resize listener
