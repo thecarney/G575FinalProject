@@ -6,13 +6,12 @@
     <title>Confederate Memorials</title>
     <!-- Font Awesome 5 -->
     <script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy" crossorigin="anonymous"></script>    <!--bootstrap 4-->
+    <!-- Bootstrap 4 -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.min.css" rel="stylesheet">
     <!--leaflet-->
     <link rel="stylesheet" href="lib/leaflet.css"/>
-    <!--leaflet search plugin-->
-
     <!--my css-->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -23,14 +22,14 @@
 <header>
     <nav	class="navbar bg-custom-darkblue navbar-dark navbar-expand-sm fixed-top" id="header1">
         <div class="container-fluid p-1">
-            <div class="h5 font-weight-light text-white mt-2">Confederate Memorial Explorer</div>
-            <div class="navbar-nav ml-auto mr-0">
-                <button class="customMenuButton1" data-toggle="modal" data-target="#helpModal">
+            <div class="h5 font-weight-light text-white mt-2" id="appTitle">Confederate Memorial Explorer</div>
+            <div class="ml-auto mr-0">
+                <button class="customMenuButton1" data-toggle="modal" data-target="#helpModal" id="buttonHelp">
                     <div class="text-center" data-toggle="tooltip" title="Open Help">
                         <i class="fas fa-question-circle fa-2x"></i>
                     </div>
                 </button>
-                <button class="customMenuButton1" data-toggle="modal" data-target="#aboutModal">
+                <button class="customMenuButton1" data-toggle="modal" data-target="#aboutModal" id="buttonAbout">
                     <div class="text-center" data-toggle="tooltip" title="About this App">
                         <i class="fas fa-info-circle fa-2x"></i>
                     </div>
@@ -128,7 +127,7 @@
 
 <!-- FOOTER -->
 <footer class="navbar footer bg-custom-darkblue navbar-expand-sm mb-0" id="footer">
-    <p class="navbar-nav ml-auto text-light font-weight-light"><small>© Mary Mahoney | Kristen Wenzel | James Carney</small></p>
+    <p class="navbar-nav ml-auto text-light font-weight-light" id="footerText"><small>© Mary Mahoney | Kristen Wenzel | James Carney</small></p>
 </footer>
 <!-- FOOTER -->
 
@@ -156,8 +155,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
 <!-- leaflet -->
 <script src="lib/leaflet.js"></script>
-<!--leaflet search plugin-->
-
 <!--my scripts-->
 <script type="text/javascript" src="js/main.js"></script>
 </body>
