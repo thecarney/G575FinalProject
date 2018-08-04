@@ -3,35 +3,44 @@
 // call initialize function after page ready
 $(document).ready(initialize);
 
+//container margins and scroll- credit to Jack Dougherty at DataVizforAll
+var imageContainerMargin = 70;  // Margin + padding
+	// This watches for the scrollable container
+	var scrollPosition = 0;
+	$('div#contents').scroll(function() {
+		scrollPosition = $(this).scrollTop();
+	});
+
+
 // starting point for script
 function initialize() {
 
     // enable bootstrap tooltips
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+         $('[data-toggle="tooltip"]').tooltip();
     });
 
     // show splash screen on page load
-    //$("#splashModal").modal('show');
+    $("#splashModal").modal('show');
 
     // resize function wraps the main function to allow responsive sizing
     resize(map());
 
-}
+};
 
 // Main script. All functions except "resize" are within map(). This main function returns the map object to allow the
 // resize function to work.
-function map() {
+function map(){
     // basemaps
     let bmStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yuwd6b9mv2sqvu8452gfu/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
-    });
+	});
     let bmSatelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1ywa89015v2sqks2r6ivwj/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
     });
     let bmLight = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yvox82csb2rlk24kxg3o2/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
-    });
+	});
     let bmVintage = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yu1tqb9m22sqvp9zo8bc1/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
     });
@@ -51,16 +60,13 @@ function map() {
         layers: [bmLight]
     });
 
-    // add basemap control
-    L.control.layers(bmGroup, null, {position: 'topleft'}).addTo(map);
-
     // declare data layerGroups
-    let stateLG;  // for state outlines
-    let monumentLG;  // points for monuments
-    let monumentHighlightLG = L.layerGroup().addTo(map);  // can use to highlight a clicked point
-
-        // async load xmlhttprequest object of json data type
-    $.ajax("data/monument.json", {
+    let stateLG = L.layerGroup();  // for state outlines
+    let monumentLG = L.layerGroup();  // points for monuments
+	let monumentHighlightLG = L.layerGroup().addTo(map);  // can use to highlight a clicked point
+	
+	// async load xmlhttprequest object of json data type			   
+	$.ajax("data/monument.json", {
         dataType: "json",
         success: function(response1){
 
@@ -73,8 +79,8 @@ function map() {
                     stateLG = L.geoJSON(response2);
 
                     // add layers
-                    monumentLG.addTo(map);
-                    stateLG.addTo(map);
+					monumentLG.addTo(map);
+					//statesLG.addTo(map;)
 
                     // create legend
                     createLegend(map);
@@ -83,6 +89,31 @@ function map() {
             });
         }
     });
+	
+		
+	// cycle through states geojson to get an array for layer control *likely duplicate of ajax call so I removed the ajax addtomap for states*
+	jQuery.getJSON("data/state.json", function(json){
+		L.geoJSON(json, {
+			onEachFeature: addMyData,
+			style: function(json) {
+				switch (json.properties.hasRemoved) {
+					case 1: return {color: "#ffff00"};
+					case 0: return {color: "#bababa"};}}		
+ 		})
+	});
+	
+    //add states to layer control
+	function addMyData(feature, layer){
+		stateLG.addLayer(layer)
+	};
+		
+	var overlayMaps = {
+		"State Boundary": stateLG			
+	};
+	
+	// add basemap control
+    L.control.layers(bmGroup, overlayMaps, {position: 'topleft'}).addTo(map);
+	
 
     // parent function to make point features
     function createMarkerLayer(data){
@@ -109,6 +140,104 @@ function map() {
         });
         map.addControl(new LegendControl());
     }
+	
+	//story map boilerplate script - credit to Jack Dougherty at DataVizforAll
+	//get map data for targeted features
+	$.getJSON('data/map.geojson', function(data) {
+   var geojson = L.geoJson(data, {
+      onEachFeature: function (feature, layer) {
+        (function(layer, properties) {
+          // This creates numerical icons to match the ID numbers
+          // OR remove the next 6 lines for default blue Leaflet markers
+          var numericMarker = L.ExtraMarkers.icon({
+            icon: 'fa-number',
+            number: feature.properties['id'],
+            markerColor: 'yellow'
+          });
+          layer.setIcon(numericMarker);
+
+          // This creates the contents of each chapter from the GeoJSON data. Unwanted items can be removed, and new ones can be added
+          var chapter = $('<p></p>', {
+            text: feature.properties['chapter'],
+            class: 'chapter-header'
+          });
+
+          
+          var source = $('<a>', {
+            text: feature.properties['source-credit'],
+            href: feature.properties['source-link'],
+            target: "_blank",
+            class: 'source'
+          });
+		  
+		  var image = $('<img>', {
+            alt: feature.properties['alt'],
+            src: feature.properties['image']
+          });
+
+          var source = $('<a>', {
+            text: feature.properties['source-credit'],
+            href: feature.properties['source-link'],
+            target: "_blank",
+            class: 'source'
+          });
+
+          var description = $('<p></p>', {
+            text: feature.properties['description'],
+            class: 'description'
+          });
+
+          var container = $('<div></div>', {
+            id: 'container' + feature.properties['id'],
+            class: 'image-container'
+          });
+
+          var imgHolder = $('<div></div', {
+            class: 'img-holder'
+          });
+
+          imgHolder.append(image);
+
+          container.append(chapter).append(imgHolder).append(source).append(description);
+          $('#contents').append(container);
+
+
+          var i;
+          var areaTop = -90;
+          var areaBottom = 0;
+
+          // Calculating total height of blocks above active
+          for (i = 1; i < feature.properties['id']; i++) {
+            areaTop += $('div#container' + i).height() + imageContainerMargin;
+          }
+
+          areaBottom = areaTop + $('div#container' + feature.properties['id']).height();
+
+          $('div#contents').scroll(function() {
+            if ($(this).scrollTop() >= areaTop && $(this).scrollTop() < areaBottom) {
+              $('.image-container').removeClass("inFocus").addClass("outFocus");
+              $('div#container' + feature.properties['id']).addClass("inFocus").removeClass("outFocus");
+
+              map.flyTo([feature.geometry.coordinates[1], feature.geometry.coordinates[0] ], feature.properties['zoom']);
+            }
+          });
+
+          // Make markers clickable
+          layer.on('click', function() {
+            $("div#contents").animate({scrollTop: areaTop + "px"});
+          });
+
+        })(layer, feature.properties);
+      }
+    });
+
+    $('div#container1').addClass("inFocus");
+    $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
+    
+	geojson.addTo(map);	
+   
+  });
+
 
     // marker styling and proportial symbols, this is called for each feature from createPropSymbols
     function pointToLayer(feature, latlng) {
@@ -118,7 +247,7 @@ function map() {
         let marker = L.marker(latlng);
 
         // make popup
-        let popupContent = "<b>"+feature.properties.name;
+        let popupContent = "<p><b>"+feature.properties.name+ ". This monument recognizes " + feature.properties.honoree+"."+"</p>";
         marker.bindPopup(popupContent, {
             closeButton: false
         });
@@ -195,9 +324,17 @@ function resize(map) {
         // adjust body padding
         $('body').css({"padding-top": navbarHeight});
 
+        // shrink title and footer font size on mobile devices
+        let result = $('#device-size-detector').find('div:visible').first().attr('id');
+        if (result === "xs") {
+            $("#appTitle").css({"font-size": "0.75em"});
+            $("#footerText").css({"font-size": "0.75em"});
+        } else {
+            $("#appTitle").css({"font-size": "1em"});
+            $("#footerText").css({"font-size": "1em"});
+        }
+
         // force Leaflet redraw
         map.invalidateSize();
     }).trigger("resize");
 }
-
-
