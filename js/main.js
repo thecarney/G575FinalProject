@@ -17,7 +17,8 @@ function initialize() {
 
     // enable bootstrap tooltips
     $(function () {
-         $('[data-toggle="tooltip"]').tooltip();
+		$('[data-toggle="tooltip"]').tooltip();
+
     });
 
     // show splash screen on page load
@@ -30,7 +31,8 @@ function initialize() {
 
 // Main script. All functions except "resize" are within map(). This main function returns the map object to allow the
 // resize function to work.
-function map(){
+
+function map() {
     // basemaps
     let bmStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yuwd6b9mv2sqvu8452gfu/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
