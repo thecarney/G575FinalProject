@@ -66,34 +66,43 @@ function map() {
     let stateLG = L.layerGroup();  // for state outlines
     let monumentLG = L.layerGroup();  // points for monuments
 	let monumentHighlightLG = L.layerGroup().addTo(map);  // can use to highlight a clicked point
-	
+
 	// async load xmlhttprequest object of json data type			   
 	$.ajax("data/monument.json", {
         dataType: "json",
         success: function(response1){
 
-            $.ajax("data/state.json", {
-                dataType: "json",
-                success: function(response2){
+            // make markers
+            monumentLG = createMarkerLayer(response1);
+            monumentLG.bringToBack();
 
-                    // make markers
-                    monumentLG = createMarkerLayer(response1);
-                    stateLG = L.geoJSON(response2);
+            // add layers
+            monumentLG.addTo(map);
 
-                    // add layers
-					monumentLG.addTo(map);
-					//statesLG.addTo(map;)
+            // create legend
+            createLegend(map);
 
-                    // create legend
-                    createLegend(map);
 
-                }
-            });
+            // $.ajax("data/state.json", {
+            //     dataType: "json",
+            //     success: function(response2){
+            //
+            //
+            //         stateLG = L.geoJSON(response2);
+            //
+            //
+			// 		//statesLG.addTo(map;)
+            //
+            //
+            //
+            //     }
+            // });
         }
     });
 	
 		
 	// cycle through states geojson to get an array for layer control *likely duplicate of ajax call so I removed the ajax addtomap for states*
+    //     concur. further edits to ajax call above. delete commented out code if it all looks ok
 	jQuery.getJSON("data/state.json", function(json){
 		L.geoJSON(json, {
 			onEachFeature: addMyData,
@@ -121,7 +130,7 @@ function map() {
     function createMarkerLayer(data){
         // iterate through all features in json
         return L.geoJson(data, {
-            // for each feature, call function to vectorize it
+            // for each feature, call function
             pointToLayer: function (feature, latlng) {
                 return pointToLayer(feature, latlng);
             }
@@ -145,100 +154,99 @@ function map() {
 	
 	//story map boilerplate script - credit to Jack Dougherty at DataVizforAll
 	//get map data for targeted features
-	$.getJSON('data/map.geojson', function(data) {
-   var geojson = L.geoJson(data, {
-      onEachFeature: function (feature, layer) {
-        (function(layer, properties) {
-          // This creates numerical icons to match the ID numbers
-          // OR remove the next 6 lines for default blue Leaflet markers
-          var numericMarker = L.ExtraMarkers.icon({
-            icon: 'fa-number',
-            number: feature.properties['id'],
-            markerColor: 'yellow'
-          });
-          layer.setIcon(numericMarker);
+    $.getJSON('data/map.geojson', function(data) {
+        var geojson = L.geoJson(data, {
+            onEachFeature: function (feature, layer) {
+                (function(layer, properties) {
+                  // This creates numerical icons to match the ID numbers
+                  // OR remove the next 6 lines for default blue Leaflet markers
+                    var numericMarker = L.ExtraMarkers.icon({
+                      icon: 'fa-number',
+                      number: feature.properties['id'],
+                      markerColor: 'yellow'
+                    });
 
-          // This creates the contents of each chapter from the GeoJSON data. Unwanted items can be removed, and new ones can be added
-          var chapter = $('<p></p>', {
-            text: feature.properties['chapter'],
-            class: 'chapter-header'
-          });
+                    layer.setIcon(numericMarker);
 
-          
-          var source = $('<a>', {
-            text: feature.properties['source-credit'],
-            href: feature.properties['source-link'],
-            target: "_blank",
-            class: 'source'
-          });
-		  
-		  var image = $('<img>', {
-            alt: feature.properties['alt'],
-            src: feature.properties['image']
-          });
-
-          var source = $('<a>', {
-            text: feature.properties['source-credit'],
-            href: feature.properties['source-link'],
-            target: "_blank",
-            class: 'source'
-          });
-
-          var description = $('<p></p>', {
-            text: feature.properties['description'],
-            class: 'description'
-          });
-
-          var container = $('<div></div>', {
-            id: 'container' + feature.properties['id'],
-            class: 'image-container'
-          });
-
-          var imgHolder = $('<div></div', {
-            class: 'img-holder'
-          });
-
-          imgHolder.append(image);
-
-          container.append(chapter).append(imgHolder).append(source).append(description);
-          $('#contents').append(container);
+                    // This creates the contents of each chapter from the GeoJSON data. Unwanted items can be removed, and new ones can be added
+                    var chapter = $('<p></p>', {
+                      text: feature.properties['chapter'],
+                      class: 'chapter-header'
+                    });
 
 
-          var i;
-          var areaTop = -90;
-          var areaBottom = 0;
+                    var source = $('<a>', {
+                      text: feature.properties['source-credit'],
+                      href: feature.properties['source-link'],
+                      target: "_blank",
+                      class: 'source'
+                    });
 
-          // Calculating total height of blocks above active
-          for (i = 1; i < feature.properties['id']; i++) {
-            areaTop += $('div#container' + i).height() + imageContainerMargin;
-          }
+                    var image = $('<img>', {
+                      alt: feature.properties['alt'],
+                      src: feature.properties['image']
+                    });
 
-          areaBottom = areaTop + $('div#container' + feature.properties['id']).height();
+                    var source = $('<a>', {
+                      text: feature.properties['source-credit'],
+                      href: feature.properties['source-link'],
+                      target: "_blank",
+                      class: 'source'
+                    });
 
-          $('div#contents').scroll(function() {
-            if ($(this).scrollTop() >= areaTop && $(this).scrollTop() < areaBottom) {
-              $('.image-container').removeClass("inFocus").addClass("outFocus");
-              $('div#container' + feature.properties['id']).addClass("inFocus").removeClass("outFocus");
+                    var description = $('<p></p>', {
+                      text: feature.properties['description'],
+                      class: 'description'
+                    });
 
-              map.flyTo([feature.geometry.coordinates[1], feature.geometry.coordinates[0] ], feature.properties['zoom']);
+                    var container = $('<div></div>', {
+                      id: 'container' + feature.properties['id'],
+                      class: 'image-container'
+                    });
+
+                    var imgHolder = $('<div></div>', {
+                      class: 'img-holder'
+                    });
+
+                    imgHolder.append(image);
+
+                    container.append(chapter).append(imgHolder).append(source).append(description);
+                    $('#contents').append(container);
+
+
+                    var i;
+                    var areaTop = -90;
+                    var areaBottom = 0;
+
+                    // Calculating total height of blocks above active
+                    for (i = 1; i < feature.properties['id']; i++) {
+                      areaTop += $('div#container' + i).height() + imageContainerMargin;
+                    }
+
+                    areaBottom = areaTop + $('div#container' + feature.properties['id']).height();
+
+                    $('div#contents').scroll(function() {
+                        if ($(this).scrollTop() >= areaTop && $(this).scrollTop() < areaBottom) {
+                            $('.image-container').removeClass("inFocus").addClass("outFocus");
+                            $('div#container' + feature.properties['id']).addClass("inFocus").removeClass("outFocus");
+                             map.flyTo([feature.geometry.coordinates[1], feature.geometry.coordinates[0] ], feature.properties['zoom']);
+                        }
+                    });
+
+                    // Make markers clickable
+                    layer.on('click', function() {
+                      $("div#contents").animate({scrollTop: areaTop + "px"});
+                    });
+
+                })(layer, feature.properties);
             }
-          });
+        });
 
-          // Make markers clickable
-          layer.on('click', function() {
-            $("div#contents").animate({scrollTop: areaTop + "px"});
-          });
+        $('div#container1').addClass("inFocus");
+        $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top' id='btnScrollUp'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
 
-        })(layer, feature.properties);
-      }
+	geojson.addTo(map);
     });
-
-    $('div#container1').addClass("inFocus");
-    $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
-    
-	geojson.addTo(map);	
-   
-  });
 
 
     // marker styling and proportial symbols, this is called for each feature from createPropSymbols
