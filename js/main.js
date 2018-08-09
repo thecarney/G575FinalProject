@@ -254,7 +254,7 @@ function map() {
         //make a style for markers
         let geojsonMarkerOptions = defaultMarkerOptions();
         // marker
-        let marker = L.marker(latlng);
+        let marker = L.circleMarker(latlng, geojsonMarkerOptions);
 
         // make popup
         let popupContent = "<p><b>"+feature.properties.name+ ". This monument recognizes " + feature.properties.honoree+"."+"</p>";
@@ -304,12 +304,13 @@ function map() {
         let colorCurrent = colorAll;
 
         return {
-            radius: 6,
+            radius: 3,
             fillColor: colorCurrent,
             color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.6
+            weight: .2,
+            opacity: .3,
+            fillOpacity: 0.3,
+            strokeOpacity: 0.3
         };
     }
 
