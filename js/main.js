@@ -33,6 +33,9 @@ function initialize() {
 // resize function to work.
 
 function map() {
+    // track lat-lon of last marker clicked
+    let lastClickedMarkerLatLon = L.latLng(75,125); //dummy initial data
+
     // basemaps
     let bmStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yuwd6b9mv2sqvu8452gfu/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
@@ -58,9 +61,29 @@ function map() {
     // map, add one basemap
     var map = map = L.map('map',{
         center: [36.8123, -86.0389],
-        zoom: 4,
+        zoom: 5,
         layers: [bmLight]
     });
+
+    // add button to reset map position
+    L.easyButton({
+        states:[
+            {
+                icon: 'fa-sync',
+                title: 'Reset View',
+                onClick: function (btn, map) {
+                    $("#btnScrollUp")[0].click();
+                    var ctr = [36.8123, -86.0389];
+                    map.setView(ctr, 5);
+                }
+            }
+            ]
+        }).addTo(map);
+    // }, function(btn, map){
+    //     var ctr = [36.8123, -86.0389];
+    //     map.setView(ctr,5);
+    //     $("#btnScrollUp")[0].click();
+    //}).addTo(map);
 
     // declare data layerGroups
     let stateLG = L.layerGroup();  // for state outlines
@@ -74,7 +97,7 @@ function map() {
 
             // make markers
             monumentLG = createMarkerLayer(response1);
-            monumentLG.bringToBack();
+            //monumentLG.bringToBack();
 
             // add layers
             monumentLG.addTo(map);
@@ -115,7 +138,7 @@ function map() {
 	
     //add states to layer control
 	function addMyData(feature, layer){
-		stateLG.addLayer(layer)
+		stateLG.addLayer(layer);
 	};
 		
 	var overlayMaps = {
@@ -238,12 +261,44 @@ function map() {
                       $("div#contents").animate({scrollTop: areaTop + "px"});
                     });
 
+                    // make popup
+                    let storyPopup = "<p><b>Read more about " + feature.properties.chapter+"."+"</p>";
+                    layer.bindPopup(storyPopup, {
+                        closeButton: false
+                    });
+
+                    // popup listeners
+                    layer.on({
+                        mouseover: function () {
+                            this.openPopup()
+                        },
+                        mouseout: function () {
+                            this.closePopup();
+                        }
+                    });
+
+
                 })(layer, feature.properties);
             }
         });
 
         $('div#container1').addClass("inFocus");
         $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top' id='btnScrollUp'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
+
+        //listener for "top" button
+        // $("#btnScrollUp").click(function(event){
+        //     var ctr = [36.8123, -86.0389];
+        //     map.setView(ctr, 5);
+        // });
+
+        //listener for "top" button to reset story map too
+        $("#btnScrollUp").click(function(event){
+            setTimeout(function () {
+                var ctr = [36.8123, -86.0389];
+                map.setView(ctr, 5);
+            },250);
+        });
+
 
 	geojson.addTo(map);
     });
@@ -254,7 +309,7 @@ function map() {
         //make a style for markers
         let geojsonMarkerOptions = defaultMarkerOptions();
         // marker
-        let marker = L.marker(latlng);
+        let marker = L.circleMarker(latlng, geojsonMarkerOptions);
 
         // make popup
         let popupContent = "<p><b>"+feature.properties.name+ ". This monument recognizes " + feature.properties.honoree+"."+"</p>";
@@ -286,14 +341,19 @@ function map() {
                 this.closePopup();
             },
             click: function () {
-                // add zoom and story map tie in
+                // clear/highlight clicked markers
+                if (lastClickedMarkerLatLon.equals(marker.getLatLng())) {
+                    // clear old highlight
+                    monumentHighlightLG.clearLayers();
+                } else {
+                    // clear old highlight
+                    monumentHighlightLG.clearLayers();
+                    // add new highlight
+                    L.circleMarker(marker.getLatLng(),markerOptions).addTo(monumentHighlightLG).bringToBack();
+                }
 
-
-                // clear old highlight
-                monumentHighlightLG.clearLayers();
-
-                // add new highlight
-                L.circleMarker(marker.getLatLng(),markerOptions).addTo(monumentHighlightLG);
+                // update tracking var
+                lastClickedMarkerLatLon = marker.getLatLng();
             }
         });
     }
@@ -304,12 +364,13 @@ function map() {
         let colorCurrent = colorAll;
 
         return {
-            radius: 6,
+            radius: 3,
             fillColor: colorCurrent,
             color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.6
+            weight: .2,
+            opacity: .3,
+            fillOpacity: 0.3,
+            strokeOpacity: 0.3
         };
     }
 
@@ -326,10 +387,15 @@ function resize(map) {
         let navbarHeight = $("#header1").outerHeight();
         let footerHeight = $("#footer").outerHeight();
         let windowHeight = $(window).outerHeight();
+        let storyMapHeaderHeight = $("#storyMapTitleBlock").outerHeight();
 
         // set new map height
         let newMapHeight = windowHeight - navbarHeight - footerHeight;
         $("#map").css({"height": newMapHeight});
+
+        // set new storymap panel height
+        let newStoryMapHeight = windowHeight - navbarHeight - footerHeight - storyMapHeaderHeight -15;
+        $("#story").css({"height": newStoryMapHeight});
 
         // adjust body padding
         $('body').css({"padding-top": navbarHeight});
