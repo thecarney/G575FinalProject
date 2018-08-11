@@ -126,6 +126,44 @@ function map() {
 		
 	// cycle through states geojson to get an array for layer control *likely duplicate of ajax call so I removed the ajax addtomap for states*
     //     concur. further edits to ajax call above. delete commented out code if it all looks ok
+    
+    //Feature search
+    var search = new L.Control.Search({
+      layer: monumentLG,
+      propertyName: 'name',
+      circleLocation:false,
+      collapsed:true,
+      textPlaceholder:'Search Monument Names',
+      zoom:'15'});
+    search.on('search_locationfound', function() { map.setZoom(18); });
+    search.on ('search_locationfound', function(e) {
+        e.layer.fire('click');
+        search.collapse();
+      });
+    map.addControl(search);   
+
+    // create legend function
+    function createLegend() {
+    let LegendControl = L.Control.extend({
+    options: {
+    position: 'bottomleft'
+    },
+    onAdd: function (map) {
+    // container
+    let container = L.DomUtil.create('div', 'legend-control-container'),
+    icon1 = ["Confederate Monuments"],
+    icon2 = ["States with Removed Monuments"]
+    label1 = ["img/monument.png"]
+    label2 = ["img/states.png"];
+
+    container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] + '<br>' + (" <img src=" + label2[0] + " height='20' width='20'>") + " " + icon2[0] + '<br>';
+
+    return container;
+    }
+    });
+    map.addControl(new LegendControl());
+    }
+    
 	jQuery.getJSON("data/state.json", function(json){
 		L.geoJSON(json, {
 			onEachFeature: addMyData,
@@ -159,22 +197,7 @@ function map() {
             }
         });
     }
-
-    // create temporal legend
-    function createLegend() {
-        let LegendControl = L.Control.extend({
-            options: {
-                position: 'bottomleft'
-            },
-            onAdd: function (map) {
-                // container
-                let container = L.DomUtil.create('div', 'legend-control-container');
-                return container;
-            }
-        });
-        map.addControl(new LegendControl());
-    }
-	
+    
 	//story map boilerplate script - credit to Jack Dougherty at DataVizforAll
 	//get map data for targeted features
     $.getJSON('data/map.geojson', function(data) {
@@ -359,19 +382,18 @@ function map() {
     }
 
     // for circle markers
-    function  defaultMarkerOptions() {
-        let colorAll = "#138db8";
-        let colorCurrent = colorAll;
+    function defaultMarkerOptions() {
+    let defIcon = L.icon({
+    iconUrl: "img/monument.png",
+    iconSize: [10, 10],
+    iconAnchor: [8, 8],
+    popupAnchor: [0, 0],
+    //shadowUrl: 'my-icon-shadow.png',
+    //shadowSize: [68, 95],
+    //shadowAnchor: [22, 94]
+    });
 
-        return {
-            radius: 3,
-            fillColor: colorCurrent,
-            color: "#000",
-            weight: .2,
-            opacity: .3,
-            fillOpacity: 0.3,
-            strokeOpacity: 0.3
-        };
+    return defIcon;
     }
 
     // return map object
