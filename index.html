@@ -14,25 +14,13 @@
     <link rel="stylesheet" href="lib/leaflet.css"/>
 	 <!--extra markers-->
     <link rel="stylesheet" href="lib/leaflet-storymap/markers/leaflet.extra-markers.min.css"/>
-    <!--leaflet search plugin-->
-
+    <!--leaflet easy button-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
     <!--my css-->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-	<!--story map containers-->
-	<div id="title" class="title-text pt-3 position-fixed">
-    <h4>Confederate Monuments in the United States</h4>
-    <small>Scroll <i class="fa fa-chevron-down"></i></small>
-  </div>
-
-  <div id="narration">
-    <div id="contents">
-      <div id="space-at-the-top" class="space-at-the-top"></div>
-    </div>
-  </div>
-	<!--story map containers-->	
 
 <!-- Navbar -->
 <header>
@@ -112,11 +100,14 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    This application explores the ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
+                    Confederate monuments are polarizing relics from the past century that celebrate soldiers, military officers,
+                    or political figures from the Confederacy and the Civil War era. For many Americans, especially those in
+                    northern or western states, they may not know the extent or prevalence of these monuments. Many southerners
+                    may assume that these monuments are relatively common. One solution that may provide citizens context for
+                    these monuments and current nationwide discussion topic is to provide citizens with an interactive map that
+                    will also provide additional narrative for monuments that have been in the news. This map hopes to inform a
+                    regular citizen about the spatial distribution of confederate monuments in the United States and provide a
+                    way to explore this data in the map.
                 </div>
                 <div class="modal-footer flex-column align-content-center">
                     <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Start Exploring</button>
@@ -125,17 +116,50 @@
         </div>
     </div>
 
-
     <!-- MAP PAGE -->
     <div class="container-fluid fadeIn" id="mainContainer">
         <div class="row" id="rowParent">
-            <div class="col m-0 p-0">
+            <div class="col-8 m-0 p-0">
             <!-- MAP -->
                 <div class="container-fluid" id="map"></div>
             </div>
+            <div class="col-4 pt-3 px-0">
+            <!-- STORY MAP -->
+                <div id="storyMapTitleBlock">
+                    <div class="flex-row text-center">
+                        <h4 class="font-weight-bold">Confederate Monuments in the United States</h4>
+                    </div>
+                    <div class="flex-row text-center">
+                        <small>Scroll <i class="fa fa-chevron-down"></i></small>
+                    </div>
+                </div>
+
+                <div class="flex-row text-center" id="story">
+                    <div id="narration">
+                        <div id="contents">
+                            <div id="space-at-the-top" class="space-at-the-top"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
     <!-- MAP PAGE -->
+
+    <!--story map containers-->
+    <!--<div id="title" class="title-text pt-3 position-fixed">-->
+        <!--<h4>Confederate Monuments in the United States</h4>-->
+        <!--<small>Scroll <i class="fa fa-chevron-down"></i></small>-->
+    <!--</div>-->
+
+    <!--<div id="narration">-->
+        <!--<div id="contents">-->
+            <!--<div id="space-at-the-top" class="space-at-the-top"></div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--story map containers-->
 	
 	
 </main>
@@ -173,8 +197,8 @@
 <!-- leaflet -->
 <script src="lib/leaflet.js"></script>
 
-<!--leaflet search plugin-->
-
+<!--leaflet easy button -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
 <!--extra markers-->
 <script src="lib/leaflet-storymap/markers/leaflet.extra-markers.min.js"></script>
 
