@@ -5,11 +5,11 @@ $(document).ready(initialize);
 
 //container margins and scroll- credit to Jack Dougherty at DataVizforAll
 var imageContainerMargin = 70;  // Margin + padding
-	// This watches for the scrollable container
-	var scrollPosition = 0;
-	$('div#contents').scroll(function() {
-		scrollPosition = $(this).scrollTop();
-	});
+// This watches for the scrollable container
+var scrollPosition = 0;
+$('div#contents').scroll(function() {
+    scrollPosition = $(this).scrollTop();
+});
 
 
 // starting point for script
@@ -17,7 +17,7 @@ function initialize() {
 
     // enable bootstrap tooltips
     $(function () {
-		$('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="tooltip"]').tooltip();
 
     });
 
@@ -33,19 +33,20 @@ function initialize() {
 // resize function to work.
 
 function map() {
-    // track lat-lon of last marker clicked
+    // track whether a marker is highlighted via a click
     let lastClickedMarkerLatLon = L.latLng(75,125); //dummy initial data
+    let markerClickStatus = "off";
 
     // basemaps
     let bmStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yuwd6b9mv2sqvu8452gfu/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
-	});
+    });
     let bmSatelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1ywa89015v2sqks2r6ivwj/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
     });
     let bmLight = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yvox82csb2rlk24kxg3o2/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
-	});
+    });
     let bmVintage = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yu1tqb9m22sqvp9zo8bc1/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
     });
@@ -58,134 +59,181 @@ function map() {
         "Vintage": bmVintage
     };
 
+    // declare data layerGroups
+    let monumentLG = L.layerGroup();  // points for monuments
+    let monumentHighlightLG = L.layerGroup();  // can use to highlight a clicked point
+    let stateLG = L.layerGroup();  // for state outlines
+
     // map, add one basemap
     var map = map = L.map('map',{
         center: [36.8123, -86.0389],
         zoom: 5,
-        layers: [bmLight]
+        layers: [bmLight, monumentLG, monumentHighlightLG]
     });
 
-    // add button to reset map position
-    L.easyButton({
-        states:[
-            {
-                icon: 'fa-sync',
-                title: 'Reset View',
-                onClick: function (btn, map) {
-                    $("#btnScrollUp")[0].click();
-                    var ctr = [36.8123, -86.0389];
-                    map.setView(ctr, 5);
-                }
-            }
-            ]
-        }).addTo(map);
-    // }, function(btn, map){
-    //     var ctr = [36.8123, -86.0389];
-    //     map.setView(ctr,5);
-    //     $("#btnScrollUp")[0].click();
-    //}).addTo(map);
+    // pane to be able to control drawing order of states
+    map.createPane('polygonPane');
+    map.getPane('polygonPane').style.zIndex = 200;
+    map.getPane('polygonPane').style.pointerEvents = 'none';
 
-    // declare data layerGroups
-    let stateLG = L.layerGroup();  // for state outlines
-    let monumentLG = L.layerGroup();  // points for monuments
-	let monumentHighlightLG = L.layerGroup().addTo(map);  // can use to highlight a clicked point
-
-	// async load xmlhttprequest object of json data type			   
-	$.ajax("data/monument.json", {
+    // async load xmlhttprequest object of json data type
+    $.ajax("data/monument.json", {
         dataType: "json",
         success: function(response1){
 
             // make markers
             monumentLG = createMarkerLayer(response1);
-            //monumentLG.bringToBack();
-
-            // add layers
-            monumentLG.addTo(map);
 
             // create legend
             createLegend(map);
 
+            // Feature search
+              // search control
+            let search = new L.Control.Search({
+                layer: monumentLG,
+                propertyName: 'name',
+                marker: {
+                    circle: {
+                        radius: 20,
+                        color: '#ff00fb',
+                        opacity: .85,
+                        weight: 6,
+                        fillOpacity: 0
+                    },
+                    icon: false,
+                },
+                collapsed: true,
+                textPlaceholder:'Search Monument Names',
+                position: 'topleft',
+                hideMarkerOnCollapse: true,
+                moveToLocation: function (latlng, title, map) {
+                    map.setView(latlng, 17);
+                }
+            });
+              // style search result marker and open its popup
+            search.on('search:locationfound', function(e) {
+                //e.layer.setStyle({fillColor: '#ff00fb', color: '#df00db'});
+                if (e.layer._popup) {
+                    let popup = e.layer.getPopup();
+                    e.layer.bindPopup(popup, {offset: [0,-16]});
+                    e.layer.openPopup();
+                }
+              // restore original style on popup close
+            }).on('search:collapsed', function(e) {
+                monumentLG.eachLayer(function(layer) {
+                    monumentLG.resetStyle(layer);
+                });
+            });
+            map.addControl(search);
 
-            // $.ajax("data/state.json", {
-            //     dataType: "json",
-            //     success: function(response2){
-            //
-            //
-            //         stateLG = L.geoJSON(response2);
-            //
-            //
-			// 		//statesLG.addTo(map;)
-            //
-            //
-            //
-            //     }
-            // });
+            // add button to reset map position
+            L.easyButton({
+                states:[
+                    {
+                        icon: 'fa-sync',
+                        title: 'Reset View',
+                        onClick: function (btn, map) {
+                            $("#btnScrollUp")[0].click();
+                            var ctr = [36.8123, -86.0389];
+                            map.setView(ctr, 5);
+                        }
+                    }
+                ]
+            }).addTo(map);
+
+            // cycle through states geojson to get an array for layer control
+            jQuery.getJSON("data/state.json", function(json){
+                L.geoJSON(json, {
+                    onEachFeature: addMyData,
+                    style: function(json) {
+                        switch (json.properties.hasRemoved) {
+                            case 1: return {color: "#ffff00"};
+                            case 0: return {color: "#bababa", opacity: 0, fillOpacity: 0};}
+                    },
+                    pane: 'polygonPane'
+                })
+            });
+
+            var overlayMaps = {
+                "State Boundary": stateLG
+            };
+
+            // function to toggle on/off layer control with custom icon
+            setupLayerControl(overlayMaps);
+
+            // force states layer to back
+            stateLG.eachLayer(function(layer){
+               layer.bringToBack();
+            });
+
+            monumentLG.eachLayer(function (layer) {
+                layer.bringToFront();
+            });
         }
     });
-	
-		
-	// cycle through states geojson to get an array for layer control *likely duplicate of ajax call so I removed the ajax addtomap for states*
-    //     concur. further edits to ajax call above. delete commented out code if it all looks ok
-    
-    //Feature search
-    var search = new L.Control.Search({
-      layer: monumentLG,
-      propertyName: 'name',
-      circleLocation:false,
-      collapsed:true,
-      textPlaceholder:'Search Monument Names',
-      zoom:'15'});
-    search.on('search_locationfound', function() { map.setZoom(18); });
-    search.on ('search_locationfound', function(e) {
-        e.layer.fire('click');
-        search.collapse();
-      });
-    map.addControl(search);   
 
     // create legend function
     function createLegend() {
-    let LegendControl = L.Control.extend({
-    options: {
-    position: 'bottomleft'
-    },
-    onAdd: function (map) {
-    // container
-    let container = L.DomUtil.create('div', 'legend-control-container'),
-    icon1 = ["Confederate Monuments"],
-    icon2 = ["States with Removed Monuments"]
-    label1 = ["img/monument.png"]
-    label2 = ["img/states.png"];
+        let LegendControl = L.Control.extend({
+            options: {
+                position: 'bottomleft'
+            },
+            onAdd: function (map) {
+                // container
+                let container = L.DomUtil.create('div', 'legend-control-container');
 
-    container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] + '<br>' + (" <img src=" + label2[0] + " height='20' width='20'>") + " " + icon2[0] + '<br>';
+                let icon1 = ["Confederate Monuments"],
+                    icon2 = ["States with Removed Monuments"],
+                    label1 = ["img/monument.png"],
+                    label2 = ["img/states.png"];
 
-    return container;
+                container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] + '<br>' + (" <img src=" + label2[0] + " height='20' width='20'>") + " " + icon2[0] + '<br>';
+
+                return container;
+            }
+        });
+        map.addControl(new LegendControl());
     }
-    });
-    map.addControl(new LegendControl());
-    }
-    
-	jQuery.getJSON("data/state.json", function(json){
-		L.geoJSON(json, {
-			onEachFeature: addMyData,
-			style: function(json) {
-				switch (json.properties.hasRemoved) {
-					case 1: return {color: "#ffff00"};
-					case 0: return {color: "#bababa"};}}		
- 		})
-	});
-	
+
+
     //add states to layer control
-	function addMyData(feature, layer){
-		stateLG.addLayer(layer);
-	};
-		
-	var overlayMaps = {
-		"State Boundary": stateLG			
-	};
-	
-	// add basemap control
-    L.control.layers(bmGroup, overlayMaps, {position: 'topleft'}).addTo(map);
-	
+    function addMyData(feature, layer){
+        stateLG.addLayer(layer);
+    }
+
+    // function to setup layer control
+    function setupLayerControl(overlayMaps) {
+        // control as var
+        let layerControl = L.control.layers(bmGroup,overlayMaps, {
+            position: 'topleft',
+            collapsed: false,
+        });
+
+        // add custom icon button for layer control that acts as toggle
+        L.easyButton({
+            states:[
+                {
+                    stateName: 'closed',
+                    icon: 'fa-layer-group',
+                    title: 'Layer Control',
+                    onClick: function (btn, map) {
+                        // add basemap control
+                        layerControl.addTo(map);
+                        this.state('open');
+                    }
+                },
+                {
+                    stateName: 'open',
+                    icon: 'fa-layer-group text-primary',
+                    title: 'Layer Control',
+                    onClick: function (btn, map) {
+                        map.removeControl(layerControl);
+                        this.state('closed');
+                    }
+                }
+            ]
+        }).addTo(map);
+    }
 
     // parent function to make point features
     function createMarkerLayer(data){
@@ -197,61 +245,61 @@ function map() {
             }
         });
     }
-    
-	//story map boilerplate script - credit to Jack Dougherty at DataVizforAll
-	//get map data for targeted features
+
+    //story map boilerplate script - credit to Jack Dougherty at DataVizforAll
+    //get map data for targeted features
     $.getJSON('data/map.geojson', function(data) {
         var geojson = L.geoJson(data, {
             onEachFeature: function (feature, layer) {
                 (function(layer, properties) {
-                  // This creates numerical icons to match the ID numbers
-                  // OR remove the next 6 lines for default blue Leaflet markers
+                    // This creates numerical icons to match the ID numbers
+                    // OR remove the next 6 lines for default blue Leaflet markers
                     var numericMarker = L.ExtraMarkers.icon({
-                      icon: 'fa-number',
-                      number: feature.properties['id'],
-                      markerColor: 'yellow'
+                        icon: 'fa-number',
+                        number: feature.properties['id'],
+                        markerColor: 'yellow'
                     });
 
                     layer.setIcon(numericMarker);
 
                     // This creates the contents of each chapter from the GeoJSON data. Unwanted items can be removed, and new ones can be added
                     var chapter = $('<p></p>', {
-                      text: feature.properties['chapter'],
-                      class: 'chapter-header'
+                        text: feature.properties['chapter'],
+                        class: 'chapter-header'
                     });
 
 
                     var source = $('<a>', {
-                      text: feature.properties['source-credit'],
-                      href: feature.properties['source-link'],
-                      target: "_blank",
-                      class: 'source'
+                        text: feature.properties['source-credit'],
+                        href: feature.properties['source-link'],
+                        target: "_blank",
+                        class: 'source'
                     });
 
                     var image = $('<img>', {
-                      alt: feature.properties['alt'],
-                      src: feature.properties['image']
+                        alt: feature.properties['alt'],
+                        src: feature.properties['image']
                     });
 
                     var source = $('<a>', {
-                      text: feature.properties['source-credit'],
-                      href: feature.properties['source-link'],
-                      target: "_blank",
-                      class: 'source'
+                        text: feature.properties['source-credit'],
+                        href: feature.properties['source-link'],
+                        target: "_blank",
+                        class: 'source'
                     });
 
                     var description = $('<p></p>', {
-                      text: feature.properties['description'],
-                      class: 'description'
+                        text: feature.properties['description'],
+                        class: 'description'
                     });
 
                     var container = $('<div></div>', {
-                      id: 'container' + feature.properties['id'],
-                      class: 'image-container'
+                        id: 'container' + feature.properties['id'],
+                        class: 'image-container'
                     });
 
                     var imgHolder = $('<div></div>', {
-                      class: 'img-holder'
+                        class: 'img-holder'
                     });
 
                     imgHolder.append(image);
@@ -266,7 +314,7 @@ function map() {
 
                     // Calculating total height of blocks above active
                     for (i = 1; i < feature.properties['id']; i++) {
-                      areaTop += $('div#container' + i).height() + imageContainerMargin;
+                        areaTop += $('div#container' + i).height() + imageContainerMargin;
                     }
 
                     areaBottom = areaTop + $('div#container' + feature.properties['id']).height();
@@ -275,19 +323,20 @@ function map() {
                         if ($(this).scrollTop() >= areaTop && $(this).scrollTop() < areaBottom) {
                             $('.image-container').removeClass("inFocus").addClass("outFocus");
                             $('div#container' + feature.properties['id']).addClass("inFocus").removeClass("outFocus");
-                             map.flyTo([feature.geometry.coordinates[1], feature.geometry.coordinates[0] ], feature.properties['zoom']);
+                            map.flyTo([feature.geometry.coordinates[1], feature.geometry.coordinates[0] ], feature.properties['zoom']);
                         }
                     });
 
                     // Make markers clickable
                     layer.on('click', function() {
-                      $("div#contents").animate({scrollTop: areaTop + "px"});
+                        $("div#contents").animate({scrollTop: areaTop + "px"});
                     });
 
                     // make popup
                     let storyPopup = "<p><b>Read more about " + feature.properties.chapter+"."+"</p>";
                     layer.bindPopup(storyPopup, {
-                        closeButton: false
+                        closeButton: false,
+                        className: 'customPopup1'
                     });
 
                     // popup listeners
@@ -300,19 +349,12 @@ function map() {
                         }
                     });
 
-
                 })(layer, feature.properties);
             }
         });
 
         $('div#container1').addClass("inFocus");
         $('#contents').append("<div class='space-at-the-bottom'><a href='#space-at-the-top' id='btnScrollUp'><i class='fa fa-chevron-up'></i></br><small>Top</small></a></div>");
-
-        //listener for "top" button
-        // $("#btnScrollUp").click(function(event){
-        //     var ctr = [36.8123, -86.0389];
-        //     map.setView(ctr, 5);
-        // });
 
         //listener for "top" button to reset story map too
         $("#btnScrollUp").click(function(event){
@@ -322,8 +364,7 @@ function map() {
             },250);
         });
 
-
-	geojson.addTo(map);
+        geojson.addTo(map);
     });
 
 
@@ -352,8 +393,9 @@ function map() {
             radius: 6,
             color: "#df00db",
             weight: 11,
-            opacity: .75,
-            fillOpacity: 0
+            opacity: 1,
+            fillColor: "#df00db",
+            fillOpacity: 1
         };
 
         marker.on({
@@ -364,17 +406,23 @@ function map() {
                 this.closePopup();
             },
             click: function () {
-                // clear/highlight clicked markers
-                if (lastClickedMarkerLatLon.equals(marker.getLatLng())) {
-                    // clear old highlight
+                if (lastClickedMarkerLatLon.equals(marker.getLatLng()) && markerClickStatus == "on") {
+                    // same marker clicked, turn off highlight
                     monumentHighlightLG.clearLayers();
-                } else {
-                    // clear old highlight
+                    markerClickStatus = "off";
+                } else if (lastClickedMarkerLatLon.equals(marker.getLatLng()) && markerClickStatus == "off") {
+                    // same marker clicked back on, turn on highlight
                     monumentHighlightLG.clearLayers();
                     // add new highlight
                     L.circleMarker(marker.getLatLng(),markerOptions).addTo(monumentHighlightLG).bringToBack();
+                    markerClickStatus = "on";
+                } else {
+                    // clear and add new
+                    monumentHighlightLG.clearLayers();
+                    // add new highlight
+                    L.circleMarker(marker.getLatLng(),markerOptions).addTo(monumentHighlightLG).bringToBack();
+                    markerClickStatus = "on";
                 }
-
                 // update tracking var
                 lastClickedMarkerLatLon = marker.getLatLng();
             }
@@ -383,17 +431,28 @@ function map() {
 
     // for circle markers
     function defaultMarkerOptions() {
-    let defIcon = L.icon({
-    iconUrl: "img/monument.png",
-    iconSize: [10, 10],
-    iconAnchor: [8, 8],
-    popupAnchor: [0, 0],
-    //shadowUrl: 'my-icon-shadow.png',
-    //shadowSize: [68, 95],
-    //shadowAnchor: [22, 94]
-    });
+        let markerOptions = {
+            radius: 6,
+            stroke: true,
+            color: "#ffffff",
+            weight: 1,
+            opacity: .5,
+            fill: true,
+            fillColor: "#0073ff",
+            fillOpacity: .5
+        };
 
-    return defIcon;
+        // let defIcon = L.icon({
+        //     iconUrl: "img/monument.png",
+        //     iconSize: [10, 10],
+        //     iconAnchor: [8, 8],
+        //     popupAnchor: [0, 0],
+        //     //shadowUrl: 'my-icon-shadow.png',
+        //     //shadowSize: [68, 95],
+        //     //shadowAnchor: [22, 94]
+        // });
+
+        return markerOptions;
     }
 
     // return map object
