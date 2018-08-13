@@ -18,7 +18,6 @@ body {
     margin: 0.2em 0;
 }
 
-/*TEMPORAL LEGEND*/
 .legend-control-container {
     width: 260px;
     height: 100%;
@@ -69,6 +68,10 @@ body {
     width: 100%;
     height: 100vh;
     z-index: 1;
+}
+
+#helpVideoContainer {
+    width: 95%;
 }
 
 #story {
@@ -237,4 +240,15 @@ h3 {
 .customPopup1 .leaflet-popup-tip,
 .customPopup1 .leaflet-popup-content-wrapper {
     background: rgb(255, 197, 58);
+}
+
+.table-borderless td,
+.table-borderless th {
+    border: 0;
+}
+
+.customUserButton {
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    border-radius: 16px;
 }

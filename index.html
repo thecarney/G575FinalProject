@@ -24,7 +24,7 @@
 
 <body>
 
-<!-- Navbar -->
+<!-- Navbar/Help/Info -->
 <header>
     <nav	class="navbar bg-custom-darkblue navbar-dark navbar-expand-sm fixed-top" id="header1">
         <div class="container-fluid p-1">
@@ -49,13 +49,60 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >Help Menu</h4>
+                    <h4 class="modal-title font-weight-bold" >Help Menu</h4>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <div class="modal-body pl-5 pr-5">
+
+                    <div class="p-3 pb-0 pt-0"> This map is designed for interactivity. Navigation and search functionality is provided via the overlay
+                    buttons in the map panel. Additional narrative is provided for a select set of monuments in the story map
+                    panel on the right. The subsections below provide some hints for using the map. Or, scroll down to view
+                    an overview video. </div>
+
+                    <h5>Help with Map Navigation</h5>
+
+                    <div class="pl-3 pr-4">
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col">Control</th>
+                                <th scope="col">Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row"> <i class="ml-3 fas fa-search"></i> </th>
+                                <td>Use this tool to search monuments by name.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"> <i class="ml-3 fas fa-sync-alt"></i> </th>
+                                <td>Use this button to reset the map to the initial view.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"> <i class="ml-3 fas fa-layer-group"></i> </th>
+                                <td>Use this menu to change basemaps and turn overlay layers on and off.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <h5 class="mb-0">Help with the Story Map</h5>
+                    <p class="p-3 pb-0 pt-0">The story map panel can be scrolled through vertically, and includes a limited
+                    set of monuments with extra narrative information. The map panel will automatically zoom to these
+                    monuments in concert with the story panel.</p>
+
+                    <h5 class="pb-3 pt-0">Overview Video</h5>
+
+
+                    <div class="container" id="helpVideoContainer">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
@@ -70,13 +117,80 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >About Our App</h4>
+                    <h4 class="modal-title font-weight-bold" >About this App</h4>
                     <button type="button" class="close" data-dismiss="modal">
                         <span>&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <div class="modal-body pl-5 pr-5">
+
+                    <div class="p-3 pb-0 pt-0 mb-0"> This web app was designed and implemented by Mary Mahoney, Kristen Wenzel,
+                        and James Carney. The application relies on the Leaflet and Bootstrap JS libraries, among others, to present
+                        a responsive and interactive web application. <br><br>
+                        References: <br>
+
+                        <div class="container col-12">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://leafletjs.com/">Leaflet</a>
+                                    </div>
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://getbootstrap.com/">Bootstrap</a>
+                                    </div>
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://fontawesome.com/">FontAwesome</a>
+                                    </div>
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://github.com/JackDougherty/leaflet-storymap">Leaflet-Storymap</a>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://mdbootstrap.com/">Material Design Bootstrap</a>
+                                    </div>
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://github.com/coryasilva/Leaflet.ExtraMarkers">Leaflet Extra-Markers</a>
+                                    </div>
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://github.com/CliffCloud/Leaflet.EasyButton">Leaflet EasyButton</a>
+                                    </div>
+                                    <div class="row align-middle">
+                                        <i class="ml-3 mt-1 fas fa-angle-right fa-xs"></i>
+                                        <a class="ml-3" href="https://jquery.com">JQuery</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="p-3 pb-0 pt-0"> For more projects or to contact one of the authors, please visit our portfolios: </div>
+                    <div class="container col-12">
+                        <div class="row">
+                            <div class="col-4">
+                                <a role="button" class="btn btn-sm btn-blue-grey customUserButton" href="https://github.com/mahonemc" target="_blank"><i class="fa fa-user mr-1"></i>Mary Mahoney</a>
+                            </div>
+                            <div class="col-4">
+                                <a role="button" class="btn btn-sm btn-blue-grey customUserButton" href="https://kristenwenzel.github.io/" target="_blank"><i class="fa fa-user mr-1"></i>Kristen Wenzel</a>
+                            </div>
+                            <div class="col-4">
+                                <a role="button" class="btn btn-sm btn-blue-grey customUserButton" href="https://thecarney.github.io/" target="_blank"><i class="fa fa-user mr-1"></i>James Carney</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="container-fluid text-dark font-weight-bold text-center font-italic pt-4">Thank you!</div>
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal">Close</button>
@@ -122,7 +236,8 @@
             <!-- MAP -->
                 <div class="container-fluid" id="map"></div>
             </div>
-            <div class="col-4 pt-3 px-0">
+
+            <div class="col-4 pt-3 px-0" id="storyPanel">
             <!-- STORY MAP -->
                 <div id="storyMapTitleBlock">
                     <div class="flex-row text-center">
