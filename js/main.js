@@ -37,6 +37,9 @@ function map() {
     let lastClickedMarkerLatLon = L.latLng(75,125); //dummy initial data
     let markerClickStatus = "off";
 
+    // track whether to show states layer in the legend
+    let stateLayerIs = "off";
+
     // basemaps
     let bmStreets = L.tileLayer('https://api.mapbox.com/styles/v1/jhcarney/cjk1yuwd6b9mv2sqvu8452gfu/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamhjYXJuZXkiLCJhIjoiY2pmbHE2ZTVlMDJnbTJybzdxNTNjaWsyMiJ9.hoiyrXTX3pOuEExAnhUtIQ', {
         maxZoom: 18
@@ -174,25 +177,48 @@ function map() {
 
     // create legend function
     function createLegend() {
+
+        // container
+        let container = L.DomUtil.create('div', 'legend-control-container');
+
+
+
+
+
+        // make control
         let LegendControl = L.Control.extend({
             options: {
                 position: 'bottomleft'
             },
             onAdd: function (map) {
-                // container
-                let container = L.DomUtil.create('div', 'legend-control-container');
-
                 let icon1 = ["Confederate Monuments"],
                     icon2 = ["States with Removed Monuments"],
                     label1 = ["img/monument.png"],
                     label2 = ["img/states.png"];
 
-                container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] + '<br>' + (" <img src=" + label2[0] + " height='20' width='20'>") + " " + icon2[0] + '<br>';
+                // initial add
+                container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] + '<br>';
+
+
+                // listen for map add/remove layer events
+                map.on('overlayadd',function(layer){
+                    container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] +
+                        '<br>' + (" <img src=" + label2[0] + " height='20' width='20'>") + " " + icon2[0] + '<br>';
+                });
+
+                map.on('overlayremove',function(layer){
+                    container.innerHTML = (" <img src=" + label1[0] + " height='20' width='20'>") + " " + icon1[0] + '<br>';
+                });
 
                 return container;
             }
         });
         map.addControl(new LegendControl());
+
+
+
+
+
     }
 
 
