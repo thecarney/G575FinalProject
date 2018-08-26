@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fe0960b-5f43-444a-89ad-1088882472bb" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -23,25 +24,25 @@
     <session id="1094921317">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="12" />
+          <entry key="project.closed" value="14" />
           <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.3" value="12" />
+          <entry key="project.open.time.3" value="13" />
           <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="14" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="JavaScript Console" value="1" />
           <entry key="css" value="701" />
-          <entry key="html" value="3656" />
+          <entry key="html" value="3658" />
           <entry key="js" value="6665" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="701" />
-          <entry key="HTML" value="3656" />
+          <entry key="HTML" value="3658" />
           <entry key="JavaScript" value="6666" />
         </counts>
       </usages-collector>
@@ -89,10 +90,9 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
-              <caret line="212" column="101" selection-start-line="212" selection-start-column="101" selection-end-line="212" selection-end-column="101" />
+            <state relative-caret-position="82">
+              <caret line="92" column="123" lean-forward="true" selection-start-line="92" selection-start-column="123" selection-end-line="92" selection-end-column="123" />
               <folding>
-                <element signature="n#div#0;n#header#0;n#body#0;n#html#0;n#!!top" />
                 <element signature="n#div#1;n#header#0;n#body#0;n#html#0;n#!!top" />
               </folding>
             </state>
@@ -155,6 +155,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -186,7 +187,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -243,12 +243,13 @@
       <workItem from="1534043517012" duration="18662000" />
       <workItem from="1534120113353" duration="2506000" />
       <workItem from="1534128674562" duration="11312000" />
-      <workItem from="1534141335221" duration="86000" />
+      <workItem from="1534141335221" duration="144000" />
+      <workItem from="1535257484516" duration="127000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94651000" />
+    <option name="totallyTimeSpent" value="94836000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -260,11 +261,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="786" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.18839428" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.18809272" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="1" />
@@ -333,10 +333,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="212" column="101" selection-start-line="212" selection-start-column="101" selection-end-line="212" selection-end-column="101" />
+        <state relative-caret-position="82">
+          <caret line="92" column="123" lean-forward="true" selection-start-line="92" selection-start-column="123" selection-end-line="92" selection-end-column="123" />
           <folding>
-            <element signature="n#div#0;n#header#0;n#body#0;n#html#0;n#!!top" />
             <element signature="n#div#1;n#header#0;n#body#0;n#html#0;n#!!top" />
           </folding>
         </state>
