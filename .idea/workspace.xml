@@ -23,11 +23,11 @@
     <session id="1094921317">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="15" />
+          <entry key="project.closed" value="16" />
           <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.3" value="14" />
+          <entry key="project.open.time.3" value="15" />
           <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="16" />
+          <entry key="project.opened" value="17" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -89,8 +89,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="84" column="99" lean-forward="true" selection-start-line="84" selection-start-column="99" selection-end-line="84" selection-end-column="99" />
+            <state relative-caret-position="564">
+              <caret line="101" column="145" selection-start-line="101" selection-start-column="145" selection-end-line="101" selection-end-column="145" />
               <folding>
                 <element signature="n#div#1;n#header#0;n#body#0;n#html#0;n#!!top" />
               </folding>
@@ -245,11 +245,12 @@
       <workItem from="1534141335221" duration="144000" />
       <workItem from="1535257484516" duration="127000" />
       <workItem from="1535259543390" duration="22000" />
+      <workItem from="1535321497026" duration="63000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94858000" />
+    <option name="totallyTimeSpent" value="94921000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -261,7 +262,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1186" extended-state="6" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.18809272" />
@@ -333,8 +334,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="84" column="99" lean-forward="true" selection-start-line="84" selection-start-column="99" selection-end-line="84" selection-end-column="99" />
+        <state relative-caret-position="564">
+          <caret line="101" column="145" selection-start-line="101" selection-start-column="145" selection-end-line="101" selection-end-column="145" />
           <folding>
             <element signature="n#div#1;n#header#0;n#body#0;n#html#0;n#!!top" />
           </folding>
